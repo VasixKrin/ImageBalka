@@ -1,2 +1,3 @@
 /bookmarks/account/migrations/
 /bookmarks/db.sqlite3
+/bookmarks/.env
