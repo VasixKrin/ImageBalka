@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Profile
+from .models import Profile, Contact
+from .views import register
 
 
 @admin.register(Profile)
