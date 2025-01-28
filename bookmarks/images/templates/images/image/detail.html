@@ -30,7 +30,7 @@
       {% for user in users_like %}
         <div>
           {% if user.profile.photo %}
-            <img src="{{ user.profile.photo.url }}">
+            <img src="{% thumbnail user.profile.photo 300x300 %}">
           {% endif %}
           <p>{{ user.first_name }}</p>
         </div>
