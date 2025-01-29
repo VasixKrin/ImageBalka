@@ -40,7 +40,7 @@ class UserRegistrationForm(forms.ModelForm):
         data = self.cleaned_data['username'].lower()
         if User.objects.filter(email=data).exists():
             raise forms.ValidationError('Username already in use')
-        return data
+        return self.cleaned_data['username']
 
 
 class UserEditForm(forms.ModelForm):
