@@ -5,7 +5,7 @@ from .models import Action
 
 
 def create_action(user, verb, target=None):
-    now = datetime.now()
+    now = timezone.now()
     last_minute = now - datetime.timedelta(seconds=60)
     similar_actions = Action.objects.filter(
         user_id=user.id,
@@ -13,9 +13,9 @@ def create_action(user, verb, target=None):
         created__gte=last_minute
     )
     if target:
-        target_cd = ContentType.objects.get_for_model(target)
+        target_ct = ContentType.objects.get_for_model(target)
         similar_actions = similar_actions.filter(
-            target_cd=target_cd,
+            target_ct=target_ct,
             target_id=target.id
         )
     if not similar_actions:
