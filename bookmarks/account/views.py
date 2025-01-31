@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
@@ -39,7 +40,6 @@ def user_login(request):
 @login_required
 def dashboard(request):
     actions = Action.objects.exclude(user=request.user)
-    # following_ids = Contact.objects.filter(user_to=request.user)
     following_ids = request.user.following.values_list(
         'id', flat=True
     )
@@ -48,7 +48,28 @@ def dashboard(request):
         actions = actions.filter(user_id__in=following_ids)
     actions = actions.select_related(
         'user', 'user__profile'
-    ).prefetch_related('target')[:10]
+    ).prefetch_related('target')
+    paginator = Paginator(actions, 6)
+    page = request.GET.get('page', 1)
+    actions_only = request.GET.get('actions_only') == '1'
+    try:
+        actions = paginator.page(page)
+    except PageNotAnInteger:
+        # if page not an integer deliver the first page
+        actions = paginator.page(1)
+    except EmptyPage:
+        if actions_only:
+            # if AJAX request and page out of range
+            # return an empty page
+            return HttpResponse('')
+        # if page out of range return last page of results
+        actions = paginator.page(paginator.num_pages)
+    if actions_only:
+        return render(
+            request,
+            'actions/action/list.html',
+            {'actions': actions}
+        )
     return render(
         request,
         'account/dashboard.html',
