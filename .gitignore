@@ -2,3 +2,9 @@
 /bookmarks/db.sqlite3
 /bookmarks/.env
 /bookmarks/images/migrations/
+/bookmarks/actions/migrations/
+/bookmarks/actions/migrations/
+/bookmarks/cert.crt
+/bookmarks/cert.key
+/cert.crt
+/cert.key

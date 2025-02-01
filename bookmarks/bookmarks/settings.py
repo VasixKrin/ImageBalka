@@ -33,6 +33,10 @@ ALLOWED_HOSTS = [
     'mysite.com',
 ]
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 # LOGIN
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'
@@ -76,10 +80,14 @@ INSTALLED_APPS = [
     'social_django',
     'django_extensions',
     'easy_thumbnails',
+    'debug_toolbar',
+    # local
     'images.apps.ImagesConfig',
+    'actions.apps.ActionsConfig',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
