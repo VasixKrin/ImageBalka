@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from itertools import chain
 
 from actions.models import Action
+from images.utils import get_most_viewed_image
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile, Contact
 from actions.utils import create_action
@@ -52,6 +53,8 @@ def dashboard(request):
     paginator = Paginator(actions, 6)
     page = request.GET.get('page', 1)
     actions_only = request.GET.get('actions_only') == '1'
+    most_viewed = get_most_viewed_image()
+    print(most_viewed)
     try:
         actions = paginator.page(page)
     except PageNotAnInteger:
@@ -73,7 +76,7 @@ def dashboard(request):
     return render(
         request,
         'account/dashboard.html',
-        {'section': 'dashboard', 'actions': actions}
+        {'section': 'dashboard', 'actions': actions, 'most_viewed': most_viewed}
     )
 
 

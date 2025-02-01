@@ -8,6 +8,18 @@ from .forms import ImageCreateForm
 from .models import Image
 from actions.utils import create_action
 
+import redis
+from django.conf import settings
+
+from .utils import get_most_viewed_image
+
+# redis connection
+r = redis.Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=settings.REDIS_DB
+)
+
 
 @login_required
 def image_create(request):
@@ -37,10 +49,14 @@ def image_create(request):
 
 def image_detail(request, id, slug):
     image = get_object_or_404(Image, id=id, slug=slug)
+    # Increment total image views by 1
+    total_views = r.incr(f'image:{image.id}:views')
+    # Increment image ranking by 1
+    r.zincrby('image_ranking', 1, image.id)
     return render(
         request,
         'images/image/detail.html',
-        {'section': 'images', 'image': image},
+        {'section': 'images', 'image': image, 'total_views': total_views},
     )
 
 
@@ -91,4 +107,14 @@ def image_list(request):
         request,
         'images/image/list.html',
         {'section': 'images', 'images': images}
+    )
+
+
+@login_required
+def image_ranking(request):
+    most_viewed = get_most_viewed_image()
+    return render(
+        request,
+        'images/image/ranking.html',
+        {'section': 'images', 'most_viewed': most_viewed}
     )
